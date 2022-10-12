@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./lib/eshengsky-jQuery-emoji-14683e9/lib/css/jquery.mCustomScrollbar.min.css">
+    <link rel="stylesheet" href="./lib/eshengsky-jQuery-emoji-14683e9/src/css/jquery.emoji.css">
+    <link rel="stylesheet" href="./index.css">
+    <title>Document</title>
+</head>
+
+<body>
+    <div class="login">
+        <div class="loginTop">基本信息</div>
+        <div class="user">
+            <label>
+                用户昵称：
+                <input type="text" id="nickName">
+            </label>
+        </div>
+        <div id="avatar">上传头像</div>
+        <div class="avatarInformation">
+            <img src="./avatar.jpg" alt="" id="Image">
+        </div>
+        <div class="scavatar">
+            <input type="file" accept=".png,.gif,.jpg" id="fileIpt">
+            <button class="btnsc">上传</button>
+        </div>
+        <button class="enter">进入</button>
+    </div>
+
+
+    <div class="main">
+        <div class="left"></div>
+        <div class="right">
+            <div class="top">即时通讯（<span>100</span>）</div>
+            <div class="body">
+                <ul class="list">
+                    <!-- 自己的信息 -->
+                    <!-- <li class="rightmsg">
+                        <div class="avatar"></div>
+                        <span>犯规犯adsg的风格和豆腐干士大夫敢死队adgadga规得分</span>
+                    </li> -->
+                    <!-- 别人的消息 -->
+                    <!-- <li class="leftmsg">
+                        <div class="nick">用户名</div>
+                        <div class="avatar"></div>
+                        <span>犯规犯规dgfasdgasdfgadfgadfgadsadfas得分</span>
+                    </li> -->
+                </ul>
+                <!-- 系统信息 -->
+                <!-- <div class="systemTip">${data}</div> -->
+                <!-- <div class="othermsg">
+                </div> -->
+            </div>
+            <div class="bottom">
+                <div class="topTool">
+                    <img src="./lib/src/emoji.png" alt="" class="emojibtn">
+                    <input type="file" class="imgfile" accept=".png,.gif,.jpg" style="display: none;">
+                    <img src="./lib/src/senimg.png" alt="" class="sendimgfiles">
+                    <img src="./lib/src/video.png" alt="" class="sendvideofiles">
+                    <input type="file" class="videofile" accept=".mp4" style="display: none;">
+                </div>
+                <div class="sendContent">
+                    <div class="content" contenteditable></div>
+                </div>
+                <div class="send">
+                    <span class="kuaisend">shift+enter发送</span>
+                    <button id="sendBtn">发送</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="./jquery.min.js"></script>
+    <script src="./lib/eshengsky-jQuery-emoji-14683e9/lib/script/jquery.mCustomScrollbar.min.js"></script>
+    <script src="./lib/eshengsky-jQuery-emoji-14683e9/lib/script/jquery.mousewheel-3.0.6.min.js"></script>
+    <script src="./lib/eshengsky-jQuery-emoji-14683e9/src/js/jquery.emoji.js"></script>
+    <script src="./socket.io.min.js" integrity="sha384-fKnu0iswBIqkjxrhQCTZ7qlLHOFEgNkRmK2vaO/LbTZSXdJfAu6ewRBdwHPhBo/H" crossorigin="anonymous"></script>
+    <script src="./index.js"></script>
+</body>
+
+</html>
