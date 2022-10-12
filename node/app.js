@@ -7,6 +7,9 @@ const cors = require('cors')
 const multer = require('multer');
 const upload = multer({ dest: 'uploads/' })
 
+//引入数据库
+const db = require('./mysql/index');
+const e = require("express");
 const app = express();
 const httpServer = createServer(app);
 const io = new Server(httpServer, {
@@ -16,6 +19,33 @@ app.use(cors())
 
 //静态资源
 app.use(express.static(path.join(__dirname, 'public')))
+
+//数据存入数据库
+function chathistory(data) {
+    const sql = 'insert into chathistory set ?'
+    let Msg = {
+        content: JSON.stringify(data)
+    }
+    db.query(sql, Msg, (err, results) => {
+        if (err) throw err
+    })
+}
+
+//加载聊天记录
+function loadChathistory(socket) {
+    const sql = 'select content from chathistory ORDER BY id desc limit 20'
+    db.query(sql, (err, results) => {
+        //判断历史信息是否为空
+        if (results.length == 0) {
+            return
+        } else if (err) {
+            throw err
+        } else {
+            socket.emit('sendhistory', results)
+        }
+    })
+}
+
 
 //视频保存服务器
 app.post('/upload', upload.single('video'), (req, res) => {
@@ -47,7 +77,6 @@ io.on("connection", (socket) => {
 
     //头像
     socket.on('sendImage', (data) => {
-        console.log(data);
         //返回给客户端
         socket.emit('acceptImage', data)
     })
@@ -61,23 +90,31 @@ io.on("connection", (socket) => {
             usersList.push(data.nick)
             socket.emit('status', '1')
             io.emit('systemtip', data.nick + '加入了聊天室');
+            //加载聊天记录
+            loadChathistory(socket)
+
             //返回给客户端当前在线人数
             io.emit('sendCount', usersList.length)
+
         } else {
             socket.emit('status', '0')
         }
-
     })
-
 
     //发送消息
     socket.on('send', (data) => {
         data.content = data.content.replace(/<br><br>/g, '<br>')
+
+        //存入数据库
+        chathistory(data);
         io.emit('SendContent', data)
     })
 
     //发送视频
     socket.on('sendvideo', (data) => {
+        //存入数据库
+        chathistory(data)
+
         //广播视频
         io.emit('SendVideo', data)
     })

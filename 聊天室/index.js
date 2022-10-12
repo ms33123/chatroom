@@ -57,6 +57,37 @@ $('.enter').on('click', () => {
                 $('.main').attr('style', 'display:block')
                 $('.login').attr('style', 'display:none')
 
+                //加载聊天记录
+                socket.on('sendhistory', (data) => {
+                    $.each(data, (index, item) => {
+                        let content = JSON.parse(item.content)
+
+                        // //判断消息是否是自己的
+                        if (content.nick == userinfo.nick) {
+                            let msg = `
+                                <li class="rightmsg">
+                                    <img class="avatar" src="${content.avatarurl}"></img>
+                                    <span>${content.content}</span>
+                                </li>`
+                            $('.list').append(msg)
+                            $('.list').children(':last').get(0).scrollIntoView(false)
+                        } else {
+                            let msg = `
+                                <li class="leftmsg">
+                                    <div class="nick">${content.nick}</div>
+                                    <img class="avatar" src="${content.avatarurl}"></img>
+                                    <span>${content.content}</span>
+                                </li>
+                                `
+                            $('.list').append(msg)
+                            $('.list').children(':last').get(0).scrollIntoView(false)
+                        }
+                    })
+                    let systemtip = `<div class="systemTip">以上为最近20条信息</div>`
+                    $('.list').append(systemtip)
+                    $('.list').children(':last').get(0).scrollIntoView(false)
+                })
+
                 //当前在线人数
                 socket.on('sendCount', (data) => {
                     $('.top > span').text(data)
