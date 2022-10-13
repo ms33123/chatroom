@@ -46,6 +46,10 @@ $('.enter').on('click', () => {
             }
         }
 
+        //渲染个人信息
+        $('.userinfo > .avatar').attr('src', userinfo.avatarurl)
+        $('.userinfo > .username').text(userinfo.nick)
+
         //发送到服务器
         socket.emit('user', userinfo)
 
@@ -56,6 +60,24 @@ $('.enter').on('click', () => {
                 //进入聊天室
                 $('.main').attr('style', 'display:block')
                 $('.login').attr('style', 'display:none')
+
+                //当前在线人数
+                socket.on('sendCount', (data) => {
+                    $('.top > span').text(data)
+                })
+
+                //加载当前在线用户列表
+                socket.on('userList', (data) => {
+                    $('.usersList>ul').empty()
+                    $.each(data, (index, item) => {
+                        let user = `
+                        <li>
+                            <img src="${item.avatarurl}" class="avatar">
+                            <span class="username">${item.nick}</span>
+                        </li>`
+                        $('.usersList>ul').append(user)
+                    })
+                })
 
                 //加载聊天记录
                 socket.on('sendhistory', (data) => {
@@ -86,11 +108,6 @@ $('.enter').on('click', () => {
                     let systemtip = `<div class="systemTip">以上为最近20条信息</div>`
                     $('.list').append(systemtip)
                     $('.list').children(':last').get(0).scrollIntoView(false)
-                })
-
-                //当前在线人数
-                socket.on('sendCount', (data) => {
-                    $('.top > span').text(data)
                 })
 
                 //以下为聊天设置
@@ -373,7 +390,6 @@ $('.file').on('change', () => {
         processData: false,
         data: fd,
         success: (res) => {
-            console.log(res);
             if (res.status == 1) {
                 let videoMsg = {
                     nick: $('#nickName').val(),

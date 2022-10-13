@@ -9,7 +9,6 @@ const upload = multer({ dest: 'uploads/' })
 
 //引入数据库
 const db = require('./mysql/index');
-const e = require("express");
 const app = express();
 const httpServer = createServer(app);
 const io = new Server(httpServer, {
@@ -111,7 +110,10 @@ app.post('/upload/file', upload.single('file'), (req, res) => {
 })
 
 //用户列表
-const usersList = [];
+const usersList = []
+
+//聊天室全部用户信息
+const usersData = []
 
 io.on("connection", (socket) => {
 
@@ -128,6 +130,7 @@ io.on("connection", (socket) => {
             //不存在，添加到用户列表
             socket.username = data.nick
             usersList.push(data.nick)
+            usersData.push(data)
             socket.emit('status', '1')
             io.emit('systemtip', data.nick + '加入了聊天室');
             //加载聊天记录
@@ -136,6 +139,8 @@ io.on("connection", (socket) => {
             //返回给客户端当前在线人数
             io.emit('sendCount', usersList.length)
 
+            //返回全部用户信息
+            io.emit('userList', usersData)
         } else {
             socket.emit('status', '0')
         }
@@ -173,9 +178,16 @@ io.on("connection", (socket) => {
         //将用户从用户列表中删除
         let index = usersList.indexOf(socket.username)
         usersList.splice(index, 1)
+        usersData.forEach((item, index) => {
+            if (item.nick == socket.username) {
+                usersData.splice(index, 1)
+            }
+        })
         console.log('有人断开了连接');
-        //当前在线人数
+        //刷新当前在线人数
         io.emit('sendCount', usersList.length)
+            //刷新在线人数列表
+        io.emit('userList', usersData)
     });
 });
 
