@@ -349,7 +349,6 @@ $('.videofile').on('change', () => {
                     avatarurl: 'avatar.jpg',
                     content: '<video controls width="270px" src="' + res.url + '"></video>'
                 }
-
                 socket.emit('sendvideo', videoMsg)
             }
         }
@@ -357,4 +356,45 @@ $('.videofile').on('change', () => {
 
     //清除文件
     $('.videofile').after($('.videofile').val(''))
+})
+
+//发送文件
+$('.sendfiles').on('click', () => {
+    $('.file').click()
+})
+$('.file').on('change', () => {
+    let files = $('.file')[0].files[0]
+    let fd = new FormData()
+    fd.append('file', files)
+    $.ajax({
+        method: 'post',
+        url: 'http://172.19.29.89:3000/upload/file',
+        contentType: false,
+        processData: false,
+        data: fd,
+        success: (res) => {
+            console.log(res);
+            if (res.status == 1) {
+                let videoMsg = {
+                    nick: $('#nickName').val(),
+                    avatarurl: 'avatar.jpg',
+                    content: `
+                    <div class="fileInfo">
+                        <div class="filename">
+                            <img class="fileImg" src="./lib/src/file.png" style="width: 60px;">
+                            <p class="fileuser">${res.name}</p>
+                            <p class="fileSize">${res.size}</p>
+                        </div>
+                        <div class="download">
+                            <a href="${res.url}" download>下载</a>
+                        </div>
+                    </div>`
+                }
+                socket.emit('sendfile', videoMsg)
+            }
+        }
+    })
+
+    //清除文件
+    $('.file').after($('.file').val(''))
 })

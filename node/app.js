@@ -20,6 +20,15 @@ app.use(cors())
 //静态资源
 app.use(express.static(path.join(__dirname, 'public')))
 
+//创建表
+const createList = 'CREATE TABLE IF NOT EXISTS `chathistory`  (`id` int(0) NOT NULL AUTO_INCREMENT,`content` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,PRIMARY KEY (`id`) USING BTREE) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;'
+db.query(createList, (err, results) => {
+    if (err) {
+        console.log(err);
+    }
+})
+
+
 //数据存入数据库
 function chathistory(data) {
     const sql = 'insert into chathistory set ?'
@@ -33,7 +42,7 @@ function chathistory(data) {
 
 //加载聊天记录
 function loadChathistory(socket) {
-    const sql = 'select content from chathistory ORDER BY id desc limit 20'
+    const sql = 'select content from chathistory ORDER BY id limit 20'
     db.query(sql, (err, results) => {
         //判断历史信息是否为空
         if (results.length == 0) {
@@ -45,7 +54,6 @@ function loadChathistory(socket) {
         }
     })
 }
-
 
 //视频保存服务器
 app.post('/upload', upload.single('video'), (req, res) => {
@@ -64,6 +72,38 @@ app.post('/upload', upload.single('video'), (req, res) => {
                     status: 1,
                     msg: '上传视频成功',
                     url: 'http://172.19.29.89:3000/video/' + filesname + '.mp4'
+                })
+            }
+        })
+    })
+})
+
+//文件上传
+app.post('/upload/file', upload.single('file'), (req, res) => {
+    const data = req.file
+    data.originalname = Buffer.from(data.originalname, 'latin1').toString('utf8')
+    let des_file = path.join(__dirname, 'public/files', data.originalname)
+    let filename = data.originalname
+    let filesize
+    if (data.size < 1000000) {
+        filesize = (data.size / 1024).toFixed(1) + 'KB'
+    } else {
+        filesize = (data.size / 1024 / 1024).toFixed(1) + 'MB'
+    }
+    fs.readFile(data.path, (err, data) => {
+        fs.writeFile(des_file, data, (err) => {
+            if (err) {
+                return res.send({
+                    status: 0,
+                    msg: '上传文件失败'
+                })
+            } else {
+                res.send({
+                    status: 1,
+                    msg: '上传文件成功',
+                    url: 'http://172.19.29.89:3000/files/' + filename,
+                    name: filename,
+                    size: filesize
                 })
             }
         })
@@ -116,6 +156,15 @@ io.on("connection", (socket) => {
         chathistory(data)
 
         //广播视频
+        io.emit('SendVideo', data)
+    })
+
+    //发送文件
+    socket.on('sendfile', (data) => {
+        //存入数据库
+        chathistory(data)
+
+        //广播文件
         io.emit('SendVideo', data)
     })
 

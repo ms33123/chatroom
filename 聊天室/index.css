@@ -149,7 +149,8 @@ label {
 }
 
 .sendimgfiles,
-.sendvideofiles {
+.sendvideofiles,
+.sendfiles {
     width: 25px;
     margin-left: 5px;
 }
@@ -202,9 +203,62 @@ label {
 }
 
 
+/* 发送文件 */
+
+.fileInfo {
+    width: 280px;
+    height: 110px;
+    background-color: #fff;
+    border-radius: 5px;
+}
+
+.filename {
+    position: relative;
+    width: 100%;
+    height: 80px;
+    border-bottom: 1px solid #ccc;
+}
+
+.fileImg {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.fileuser {
+    position: absolute;
+    left: 23%;
+    top: 25%;
+    font-size: 15px;
+    color: #171a1d;
+}
+
+.fileSize {
+    position: absolute;
+    left: 23%;
+    top: 50%;
+    font-size: 15px;
+}
+
+.download {
+    width: 100%;
+    height: 29px;
+    text-align: center;
+}
+
+.download>a {
+    display: block;
+    width: 100%;
+    height: 29px;
+    text-decoration: none;
+    color: #007fff;
+}
+
+
 /* 消息展示 */
 
 .systemTip {
+    position: relative;
     width: 100%;
     height: 5%;
     text-align: center;
@@ -303,7 +357,7 @@ label {
     width: 10px;
     height: 10px;
     background-color: #68bd76;
-    left: -5px;
+    left: -3px;
     border-bottom: 1px solid #68bd76;
     border-left: 1px solid #68bd76;
     transform: rotate(45deg);
